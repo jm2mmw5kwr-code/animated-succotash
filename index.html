@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mein Tag</title>
+  <meta name="description" content="Persönlicher Tracker für Kalorien, Wasser, Gym und Gewicht">
+  <meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1216" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mein Tag">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="title">Mein Tag</h1>
+    <button class="icon-btn" data-act="menu" aria-label="Menü">☰</button>
+  </header>
+
+  <main id="app"></main>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-act="go" data-view="heute"><span>🏠</span>Heute</button>
+    <button data-act="go" data-view="essen"><span>🍽️</span>Essen</button>
+    <button data-act="go" data-view="wasser"><span>💧</span>Wasser</button>
+    <button data-act="go" data-view="gym"><span>💪</span>Gym</button>
+    <button data-act="go" data-view="gewicht"><span>⚖️</span>Gewicht</button>
+  </nav>
+
+  <div id="sheet-root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="party" class="party" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
