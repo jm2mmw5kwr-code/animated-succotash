@@ -1,5 +1,5 @@
 // Service Worker: speichert die App, damit sie auch offline startet.
-const CACHE = 'meintag-v1';
+const CACHE = 'meintag-v2';
 const ASSETS = [
   './',
   './index.html',

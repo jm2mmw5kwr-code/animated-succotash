@@ -10,6 +10,10 @@ const MEALS = [
 ];
 const MEAL = Object.fromEntries(MEALS.map(([k, label, icon]) => [k, { label, icon }]));
 const WD = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+const CHECKS = [
+  ['lesen', '20 Minuten gelesen', '📖'],
+  ['beten', 'Gebetet', '🙏']
+];
 
 const defaults = () => ({
   settings: {
@@ -197,6 +201,18 @@ function waterTimeline() {
   ${drunk >= g ? '<div class="done-badge">Geschafft! 💧</div>' : ''}`;
 }
 
+function checklist(k) {
+  const c = day(k).checks || {};
+  const done = CHECKS.filter(([key]) => c[key]).length;
+  return `
+  <ul class="list">${CHECKS.map(([key, label, icon]) => `
+    <li><button class="check-item ${c[key] ? 'on' : ''}" data-act="check-toggle" data-key="${key}" data-date="${k}" aria-pressed="${!!c[key]}">
+      <span class="ico">${icon}</span><span class="lbl">${label}</span><i>${c[key] ? '✓' : ''}</i>
+    </button></li>`).join('')}
+  </ul>
+  ${done === CHECKS.length ? '<div class="gym-count" style="margin:10px 0 0"><span class="ok">Alles erledigt – wunderbar! 🌟</span></div>' : ''}`;
+}
+
 function gymBlock() {
   const n = now();
   const mon = mondayOf(n);
@@ -344,6 +360,10 @@ const VIEWS = {
       ${gymButton()}
     </section>
     <section class="card">
+      <div class="card-head"><h2>✅ Checkliste</h2></div>
+      ${checklist(k)}
+    </section>
+    <section class="card">
       <div class="card-head"><h2>📝 Heute eingetragen</h2></div>
       ${entries.length
         ? `<ul class="list">${entries.map((e) => (e._t === 'f' ? foodItem(e, k) : waterItem(e, k))).join('')}</ul>`
@@ -489,9 +509,11 @@ const VIEWS = {
       <p class="muted small" style="margin:0 0 6px">Alle Tage bleiben hier gespeichert. Tippe auf einen Tag, um die Mahlzeiten anzusehen oder zu ändern.</p>
       <ul class="list">${list.map((k) => {
         const kc = kcalOf(k), w = waterOf(k);
+        const ch = day(k).checks || {};
+        const marks = CHECKS.filter(([key]) => ch[key]).map(([, , i]) => i).join('');
         return `<li class="item tap" data-act="open-day" data-date="${k}">
           <div class="ico">${S.gym.includes(k) ? '💪' : '📅'}</div>
-          <div class="txt"><b>${relDay(k)}</b><small>${fmt(kc)} kcal · ${fmt(w)} ml${w >= S.settings.waterGoal ? ' 💧' : ''}</small></div>
+          <div class="txt"><b>${relDay(k)}</b><small>${fmt(kc)} kcal · ${fmt(w)} ml${w >= S.settings.waterGoal ? ' 💧' : ''}${marks ? ' · ' + marks : ''}</small></div>
           <div class="val" style="color:${css(ringClass(kc, S.settings.kcalGoal))}">●</div>
         </li>`;
       }).join('')}</ul>
@@ -783,6 +805,13 @@ const A = {
     toast('🗑️ Gelöscht', () => { dayRW(k).water.push(e); save(); render(); });
   },
 
+  'check-toggle': (el) => {
+    const d = dayRW(el.dataset.date);
+    d.checks = d.checks || {};
+    d.checks[el.dataset.key] = !d.checks[el.dataset.key];
+    save(); render();
+    if (d.checks[el.dataset.key]) toast(el.dataset.key === 'lesen' ? 'Super, 20 Minuten gelesen! 📖' : 'Schön, dass du gebetet hast 🙏');
+  },
   'gym-today': () => toggleGym(todayKey()),
   'gym-toggle': (el) => toggleGym(el.dataset.date),
 
